@@ -17,6 +17,11 @@ jobs:
          registry-url: 'https://npm.pkg.github.com'
          scope: '@aparnajyothi-y'
      - run: npm i    
-     - run: npm publish
+     -  run: npm run test
+     - name: Setup .npmrc file and publish
+       run: |
+        echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
+        npm install
+        npm publish --access public
        env:
           NODE_AUTH_TOKEN: ${{secrets.GIT_PROXIMA}}
