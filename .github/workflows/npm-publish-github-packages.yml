@@ -15,7 +15,7 @@ jobs:
          node-version: '20'
          cache: 'npm'
          registry-url: 'https://npm.pkg.github.com'
-         scope: '@aparnajyothi-y'
+         
      - run: npm i    
      
      - name: Setup .npmrc file and publish
