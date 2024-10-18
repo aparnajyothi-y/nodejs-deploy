@@ -15,17 +15,17 @@ jobs:
 
     steps:
       - name: Checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
         with:
-          version: 9.1.2 # Specify the desired version of pnpm
+          version: 9.1.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'pnpm'
@@ -34,7 +34,14 @@ jobs:
         run: pnpm config set store-dir $PNPM_CACHE_FOLDER
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          if [ ! -f pnpm-lock.yaml ]; then
+            echo "Lockfile not found. Generating new lockfile."
+            pnpm install
+          else
+            echo "Lockfile found. Installing dependencies with frozen lockfile."
+            pnpm install --frozen-lockfile
+          fi
 
       - name: Setup npmrc File for Private Registry
         run: |
@@ -52,4 +59,4 @@ jobs:
           cat "$HOME/.npmrc"
 
       - name: Test Dependencies
-        run: pnpm test 
+        run: pnpm test # Replace with your actual test command if needed
