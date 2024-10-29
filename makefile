@@ -1,18 +1,10 @@
-# Makefile for building the web frontend
+# Makefile
 
-.PHONY: all webfrontend-build webfrontend-test clean
+.PHONY: webfrontend-build webfrontend-test
 
-# Default target
-all: webfrontend-build
-
-# Target for building the web frontend
 webfrontend-build:
-	yarn install  # Install dependencies
-	yarn build    # Build the project
+	yarn install
+	yarn build
 
 webfrontend-test:
-    yarn test
-
-# Clean target
-clean:
-	rm -rf build  # Adjust according to your project's build output
+	yarn test
