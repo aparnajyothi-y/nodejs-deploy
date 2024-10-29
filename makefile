@@ -1,20 +1,15 @@
- # Makefile for a web frontend project
+# Makefile for building the web frontend
 
-# Variables
-BUILD_DIR = build
+.PHONY: all webfrontend-build clean
 
 # Default target
-all: build
+all: webfrontend-build
 
-# Build target
-build:
-	yarn install
-	yarn build
+# Target for building the web frontend
+webfrontend-build:
+	yarn install  # Install dependencies
+	yarn build    # Build the project
 
 # Clean target
 clean:
-	rm -rf $(BUILD_DIR)
-
-# Test target
-test:
-	yarn test
+	rm -rf build  # Adjust according to your project's build output
