@@ -52,9 +52,6 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Check Yarn Cache Directory
-        run: echo "Yarn cache directory: $(yarn cache dir)"
-
       - name: List Installed Packages
         run: yarn list --depth=0
 
