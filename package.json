@@ -2,11 +2,11 @@
   "name": "nodejs-deploy",
   "version": "1.0.0",
   "description": "A simple Node.js application",
-  "main": "src/index.js",  // Updated main entry point
+  "main": "src/index.js",
   "scripts": {
-    "start": "node dist/index.js",  // Updated to point to the built file
+    "start": "node dist/index.js",
     "build": "babel src -d dist",
-    "test": "jest"  // Updated test script to run Jest
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,10 @@
     "@babel/core": "^7.21.0",
     "@babel/cli": "^7.21.0",
     "@babel/preset-env": "^7.21.0",
-    "jest": "^27.0.0"  // Added Jest for testing
+    "jest": "^27.0.0"
+  },
+  "jest": {
+    "testMatch": ["**/tests/**/*.[jt]s?(x)"]
   },
   "author": "",
   "license": "ISC",
