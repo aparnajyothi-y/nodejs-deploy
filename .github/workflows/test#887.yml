@@ -1,0 +1,69 @@
+name: test#887
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  checks: write
+  packages: write
+  actions: read
+  contents: write
+  issues: read
+  pull-requests: write
+
+jobs:
+  build-webfrontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install dependencies and build
+        run: make webfrontend-build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: webfrontend
+          path: service/webfrontend/build/
+
+  test-webfrontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Check Yarn Cache Directory
+        run: echo "Yarn cache directory: $(yarn cache dir)"
+
+      - name: List Installed Packages
+        run: yarn list --depth=0
+
+      - name: Run tests
+        run: make webfrontend-test
+
+      - name: Upload Test Results (webfrontend)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: webfrontend-test-results
+          path: "**/webfrontend/junit.xml"
