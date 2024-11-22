@@ -28,10 +28,10 @@ jobs:
         with:
           node-version: '18'
 
-      # Step 3: Install dependencies with npm ci
+      # Step 3: Install dependencies using npm ci (with an existing package-lock.json)
       - name: Install dependencies
         run: npm ci --verbose
 
-      # Step 4: Check logs for cache hits and misses
+      # Step 4: Check for cache hits and misses
       - name: Check for cache hits
         run: cat /home/runner/.npm/_logs/*-debug-*.log | grep "cache hit" || echo "No cache hit"
