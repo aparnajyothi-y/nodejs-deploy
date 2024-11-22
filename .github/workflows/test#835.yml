@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Reproduce Cache Miss and Font Awesome Issue
 
 on:
   push:
@@ -13,21 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Setup Node.js
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Node.js with caching enabled (npm cache)
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
+          cache: 'npm'
 
-      # Step 2: Install dependencies using npm install (fallback)
+      # Step 3: Install dependencies (will log cache misses)
       - name: Install dependencies
-        run: npm install --verbose
+        run: npm ci --verbose
+        shell: bash
 
-      # Step 3: Cache node_modules (optional, if needed for your workflow)
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
+      # Step 4: Run tests (optional step, for example, to check that your app works)
+      - name: Run tests
+        run: npm test
+        shell: bash
