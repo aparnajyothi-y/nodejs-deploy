@@ -13,4 +13,4 @@ jobs:
       - uses: gowridurgad/setup-node@testing-134
         with:
           node-version: 16
-          mirror-url : "https://npm.taobao.org/mirrors/node/"
+          mirror-url : "https://nodejs.org/dist/"
