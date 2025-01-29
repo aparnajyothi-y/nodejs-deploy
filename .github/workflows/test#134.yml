@@ -14,4 +14,4 @@ jobs:
         uses: aparnajyothi-y/setup-node@mirror-url
         with:
           node-version: '19'
-          mirrorURL: 'http://mirror.kangaroot.net/nodejs/dist/'
+          mirrorURL: 'https://nodejs.org/dist/'
