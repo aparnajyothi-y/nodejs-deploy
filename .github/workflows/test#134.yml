@@ -1,17 +1,17 @@
-name: PR134
+name: Test Setup Node with MirrorURL
 
 on:
-  
   workflow_dispatch:
 
-
 jobs:
-  build:
-    runs-on: macos-13
+  setup-node:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: gowridurgad/setup-node@gowri-36
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js with mirrorURL
+        uses: aparnajyothi-y/setup-node@mirror-url
         with:
-          node-version: 16
-          
-          mirror-url : "https://nodejs.org/dist/"
+          node-version: '20'
+          mirror-url: 'https://my-mirror-url.com'
