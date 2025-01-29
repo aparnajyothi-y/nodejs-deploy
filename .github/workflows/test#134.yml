@@ -14,4 +14,4 @@ jobs:
         uses: aparnajyothi-y/setup-node@mirror-url
         with:
           node-version: '19'
-          mirrorURL: 'https://npm.taobao.org/mirrors/node/'
+          mirrorURL: 'http://mirror.kangaroot.net/nodejs/dist/'
