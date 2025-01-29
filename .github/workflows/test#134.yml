@@ -14,4 +14,4 @@ jobs:
         uses: aparnajyothi-y/setup-node@mirror-url
         with:
           node-version: '20'
-          mirror-url: 'https://my-mirror-url.com'
+          mirrorURL: 'https://my-mirror-url.com'
