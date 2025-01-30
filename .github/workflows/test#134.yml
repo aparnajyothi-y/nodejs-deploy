@@ -5,7 +5,7 @@ on:
 
 jobs:
   setup-node:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -13,6 +13,6 @@ jobs:
       - name: Set up Node.js with mirrorURL
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
-          node-version: '19.0.8'
+          node-version: '19'
           mirror-url: 'https://nodejs.org/dist/'
-          check-latest : true
+          check-latest : false
