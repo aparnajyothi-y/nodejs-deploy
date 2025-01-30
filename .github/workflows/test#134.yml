@@ -15,4 +15,4 @@ jobs:
         with:
           node-version: '19'
           mirror-url: 'https://nodejs.org/dist/'
-          check-latest : false
+          check-latest : true
