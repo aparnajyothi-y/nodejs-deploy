@@ -14,4 +14,4 @@ jobs:
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
           node-version: '19'
-          mirrorURL: 'https://nodejs.org/dist/aaaa'
+          ##mirrorURL: 'https://nodejs.org/dist/aaaa'
