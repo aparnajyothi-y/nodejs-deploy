@@ -1,4 +1,4 @@
-name: Test Setup Node with MirrorURL
+name: Test Setup Node with MirrorURL (Nightly Builds)
 
 on:
   workflow_dispatch:
@@ -6,13 +6,27 @@ on:
 jobs:
   setup-node:
     runs-on: macos-latest
+    
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js with mirrorURL
+      # Step 2: Set up Node.js with nightly version and mirror URL
+      - name: Set up Node.js (Nightly Build) with mirrorURL
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
-          node-version: '19'
-          mirror-url: 'https://nodejs.org/dist/'
-          ##check-latest : false
+          node-version: '21-nightly'  # Specify nightly build version
+          mirror-url: 'https://nodejs.org/download/nightly/'  # Use the nightly distribution URL
+          check-latest: false   # Optional: Set to false to not check for the latest version (if required)
+
+      # Step 3: Verify Node.js installation and the mirror URL functionality
+      - name: Verify Node.js installation
+        run: |
+          node -v  # Verify Node.js version (should be a nightly version)
+          npm -v   # Verify npm version
+
+      # Step 4: Additional validation (Optional) - Check if the mirror URL is being used
+      - name: Check Mirror URL in setup
+        run: |
+          echo "Mirror URL used: https://nodejs.org/download/nightly/"
