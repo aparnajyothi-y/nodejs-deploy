@@ -14,5 +14,5 @@ jobs:
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
           node-version: '19'
-          mirror-url: 'https://npm.taobao.org/mirrors/node/'
+          mirror-url: 'https://fastly.jsdelivr.net/npm/node/'
           check-latest : false
