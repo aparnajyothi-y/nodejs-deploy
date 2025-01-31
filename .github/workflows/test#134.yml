@@ -17,7 +17,7 @@ jobs:
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
           node-version: '21-nightly'  # Specify nightly build version
-          mirror-url: 'https://nodejs.org/download/nightly/aaaa'  # Use the nightly distribution URL
+          ##mirror-url: 'https://nodejs.org/download/nightly/aaaa'  # Use the nightly distribution URL
           check-latest: false   # Optional: Set to false to not check for the latest version (if required)
 
       # Step 3: Verify Node.js installation and the mirror URL functionality
