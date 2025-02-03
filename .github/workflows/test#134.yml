@@ -17,5 +17,5 @@ jobs:
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
           node-version: '20'  # Specify nightly build version
-          mirror-url: 'https://nodejs.org/dist/test'  # Use the nightly distribution URL
+          mirror-url: 'https:/giehdkejche/'  # Use the nightly distribution URL
           check-latest: false   # Optional: Set to false to not check for the latest version
