@@ -16,17 +16,6 @@ jobs:
       - name: Set up Node.js (Nightly Build) with mirrorURL
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
-          node-version: '21-nightly'  # Specify nightly build version
-          ##mirror-url: 'https://nodejs.org/download/nightly/aaaa'  # Use the nightly distribution URL
-          check-latest: false   # Optional: Set to false to not check for the latest version (if required)
-
-      # Step 3: Verify Node.js installation and the mirror URL functionality
-      - name: Verify Node.js installation
-        run: |
-          node -v  # Verify Node.js version (should be a nightly version)
-          npm -v   # Verify npm version
-
-      # Step 4: Additional validation (Optional) - Check if the mirror URL is being used
-      - name: Check Mirror URL in setup
-        run: |
-          echo "Mirror URL used: https://nodejs.org/download/nightly/"
+          node-version: '20'  # Specify nightly build version
+          mirror-url: 'https://nodejs.org/dist/test'  # Use the nightly distribution URL
+          check-latest: false   # Optional: Set to false to not check for the latest version
