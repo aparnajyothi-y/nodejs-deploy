@@ -1,4 +1,4 @@
-name: Test Setup Node with MirrorURL (Nightly Builds)
+name: Test Setup Node with MirrorURL
 
 on:
   workflow_dispatch:
@@ -12,10 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js with nightly version and mirror URL
-      - name: Set up Node.js (Nightly Build) with mirrorURL
+      # Step 2: Set up Node.js with mirror URL
+      - name: Set up Node.js with mirrorURL
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
-          node-version: '20'  # Specify nightly build version
-          mirror-url: 'https:/giehdkejche/'  # Use the nightly distribution URL
-          check-latest: false   # Optional: Set to false to not check for the latest version
+          node-version: '20'  
+          check-latest: false  
+          mirror-url : 'https://nodejs.org/dist/'
