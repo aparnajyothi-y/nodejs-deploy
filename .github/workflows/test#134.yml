@@ -18,6 +18,6 @@ jobs:
         # uses: actions/setup-node@v4
         with:
           node-version: '18.9.0'
-          check-latest: false 
+          check-latest: true
           mirror-url: 'https://nodejs.org/download/release/'
 
