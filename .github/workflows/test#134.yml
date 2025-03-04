@@ -12,10 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js with mirror URL
-      - name: Set up Node.js with mirrorURL
+      # Step 2: Set up Node.js with different mirror URL
+      - name: Set up Node.js with different mirrorURL
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
           node-version: '20'  
           check-latest: false  
-          mirror-url : 'https://nodejs.org/dist/'
+          mirror-url: 'https://npm.taobao.org/mirrors/node/'
