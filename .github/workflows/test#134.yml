@@ -17,7 +17,7 @@ jobs:
         uses: aparnajyothi-y/setup-node@add-mirror-url
         # uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '18.9.0'
           check-latest: false 
           mirror-url: 'https://nodejs.org/download/release/'
 
