@@ -18,4 +18,5 @@ jobs:
         with:
           node-version: '20'  
           check-latest: false  
-          mirror-url: 'https://npm.taobao.org/mirrors/node/'
+          mirror-url: 'https://cf-hak5-nodejs-proxy.global.ssl.fastly.net/node/'
+
