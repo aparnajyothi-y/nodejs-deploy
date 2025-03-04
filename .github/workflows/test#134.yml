@@ -12,11 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js with different mirror URL
+      # Step 2: Set up Node.js with empty node-version
       - name: Set up Node.js with different mirrorURL
         uses: aparnajyothi-y/setup-node@add-mirror-url
         with:
-          node-version: '18'  
+          node-version: ''  
           check-latest: false 
           mirror-url: 'https://nodejs.org/download/release/'
 
