@@ -19,5 +19,5 @@ jobs:
         with:
           node-version: '23'
           check-latest: true
-          mirror-url: 'https://nodejs.org/dist/'
+          mirror-url: 'https://nodejs.org/download/release/'
 
