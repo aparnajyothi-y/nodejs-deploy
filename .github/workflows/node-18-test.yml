@@ -1,16 +1,23 @@
-name: Node-18-test
+name: MirrorUrl-1240PR
 
 on:
   workflow_dispatch:
-   
-jobs:
 
-  node-18-test:
-    runs-on: ubuntu-latest
+jobs:
+  setup-node:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest, macos-13, ubuntu-24.04-arm]
     steps:
-     - uses: actions/checkout@v4
-     - uses: actions/setup-node@v4
-       with:
-         node-version: '20'
-        
-     - run: npm ci
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js with mirrorURL
+        uses: marco-ippolito/setup-node@mirror
+        with:
+          node-version: '21'
+          mirror: ' '
+          mirror-token: ${{secrets.GITHUB_TOKEN}}
+      - name: Verify Node.js installation
+        run: node -v  
