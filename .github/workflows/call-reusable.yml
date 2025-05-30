@@ -5,7 +5,7 @@ on:
 
 jobs:
   cache-422-repro:
-    runs-on: self-hosted  # or your self-hosted runner on Azure
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -24,12 +24,16 @@ jobs:
           path: /tmp/pnpm-store-path-A
           key: pnpm-store-Linux-18.20.4-v1
 
-      - name: Create dummy file in Path A
-        run: |
-          mkdir -p /tmp/pnpm-store-path-A
-          echo "dummy cache content" > /tmp/pnpm-store-path-A/cache.txt
+      - name: Show restored files
+        run: ls -la /tmp/pnpm-store-path-A || echo "No cache restored"
 
-      - name: Save PNPM cache (Path B - different from restore)
+      - name: Prepare different cache content in Path B
+        run: |
+          mkdir -p /tmp/pnpm-store-path-B
+          echo "different dummy cache content" > /tmp/pnpm-store-path-B/cache.txt
+          ls -la /tmp/pnpm-store-path-B
+
+      - name: Save PNPM cache (Path B)
         uses: actions/cache@v4
         with:
           path: /tmp/pnpm-store-path-B
