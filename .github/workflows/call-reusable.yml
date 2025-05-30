@@ -1,44 +1,36 @@
-name: PNPM Cache Example - Try 422
+name: Reproduce Cache 422 Error
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 jobs:
-  install:
-    runs-on: self-hosted
+  cache-422-repro:
+    runs-on: self-hosted  # or your self-hosted runner on Azure
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18.20.4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.20.4
 
-    - name: Install PNPM
-      run: npm install -g pnpm
+      - name: Install PNPM
+        run: npm install -g pnpm
 
-    - name: Set store path dynamically (simulate path differences)
-      id: set_path
-      run: |
-        # Example: path depends on env or runner user (simulate mismatch)
-        if [[ "$(hostname)" == "my-azure-runner" ]]; then
-          echo "store_path=/home/azureuser/.local/share/pnpm/store/v10" >> $GITHUB_OUTPUT
-        else
-          echo "store_path=/home/ec2-user/_work/_tool/node/18.20.4/x64" >> $GITHUB_OUTPUT
-        fi
+      - name: Restore PNPM cache (Path A)
+        uses: actions/cache@v4
+        with:
+          path: /tmp/pnpm-store-path-A
+          key: pnpm-store-Linux-18.20.4-v1
 
-    - name: Restore PNPM cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ steps.set_path.outputs.store_path }}
-        key: pnpm-store-Linux-18.20.4-v1
+      - name: Create dummy file in Path A
+        run: |
+          mkdir -p /tmp/pnpm-store-path-A
+          echo "dummy cache content" > /tmp/pnpm-store-path-A/cache.txt
 
-    - name: Install dependencies
-      run: pnpm install
-
-    - name: Save PNPM cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ steps.set_path.outputs.store_path }}
-        key: pnpm-store-Linux-18.20.4-v1
+      - name: Save PNPM cache (Path B - different from restore)
+        uses: actions/cache@v4
+        with:
+          path: /tmp/pnpm-store-path-B
+          key: pnpm-store-Linux-18.20.4-v1
