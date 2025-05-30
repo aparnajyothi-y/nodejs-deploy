@@ -10,14 +10,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install PNPM
-      run: npm install -g pnpm
-
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 18.20.4
-        cache: 'pnpm'
+
+    - name: Install PNPM
+      run: npm install -g pnpm
 
     - name: Show PNPM store path
       id: pnpm-cache-path
