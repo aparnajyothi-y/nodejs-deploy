@@ -1,11 +1,11 @@
-name: PNPM Cache Example
+name: PNPM Cache Example - Force 422
 
 on:
   workflow_call:
 
 jobs:
   install:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v4
@@ -18,23 +18,23 @@ jobs:
     - name: Install PNPM
       run: npm install -g pnpm
 
-    - name: Get PNPM store path or fallback
-      id: pnpm-path
+    - name: Set invalid cache path
+      id: invalid-path
       run: |
-        PNPM_STORE_PATH=$(pnpm store path 2>/dev/null || echo "/tmp/fake-pnpm-store-path")
-        echo "store_path=$PNPM_STORE_PATH" >> $GITHUB_OUTPUT
+        # Setting a path that likely doesn't exist or isn't accessible to cause failure
+        echo "store_path=/nonexistent/path/for/cache" >> $GITHUB_OUTPUT
 
-    - name: Restore PNPM cache
+    - name: Restore PNPM cache with invalid path
       uses: actions/cache@v4
       with:
-        path: ${{ steps.pnpm-path.outputs.store_path }}
-        key: pnpm-store-${{ runner.os }}-18.20.4-v1
+        path: ${{ steps.invalid-path.outputs.store_path }}
+        key: pnpm-store-invalid-key-!@#  # invalid characters to simulate error
 
     - name: Install dependencies
-      run: pnpm install || echo "Skipping install if pnpm not working"
+      run: pnpm install || echo "pnpm install failed as expected"
 
-    - name: Save PNPM cache
+    - name: Save PNPM cache with invalid path
       uses: actions/cache@v4
       with:
-        path: ${{ steps.pnpm-path.outputs.store_path }}
-        key: pnpm-store-${{ runner.os }}-18.20.4-v1
+        path: ${{ steps.invalid-path.outputs.store_path }}
+        key: pnpm-store-invalid-key-!@#
