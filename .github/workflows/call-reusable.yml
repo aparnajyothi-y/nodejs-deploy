@@ -1,4 +1,4 @@
-name: PNPM Cache Example - Force 422
+name: PNPM Cache Example - Try 422
 
 on:
   workflow_call:
@@ -18,23 +18,27 @@ jobs:
     - name: Install PNPM
       run: npm install -g pnpm
 
-    - name: Set invalid cache path
-      id: invalid-path
+    - name: Set store path dynamically (simulate path differences)
+      id: set_path
       run: |
-        # Setting a path that likely doesn't exist or isn't accessible to cause failure
-        echo "store_path=/nonexistent/path/for/cache" >> $GITHUB_OUTPUT
+        # Example: path depends on env or runner user (simulate mismatch)
+        if [[ "$(hostname)" == "my-azure-runner" ]]; then
+          echo "store_path=/home/azureuser/.local/share/pnpm/store/v10" >> $GITHUB_OUTPUT
+        else
+          echo "store_path=/home/ec2-user/_work/_tool/node/18.20.4/x64" >> $GITHUB_OUTPUT
+        fi
 
-    - name: Restore PNPM cache with invalid path
+    - name: Restore PNPM cache
       uses: actions/cache@v4
       with:
-        path: ${{ steps.invalid-path.outputs.store_path }}
-        key: pnpm-store-invalid-key-!@#  # invalid characters to simulate error
+        path: ${{ steps.set_path.outputs.store_path }}
+        key: pnpm-store-Linux-18.20.4-v1
 
     - name: Install dependencies
-      run: pnpm install || echo "pnpm install failed as expected"
+      run: pnpm install
 
-    - name: Save PNPM cache with invalid path
+    - name: Save PNPM cache
       uses: actions/cache@v4
       with:
-        path: ${{ steps.invalid-path.outputs.store_path }}
-        key: pnpm-store-invalid-key-!@#
+        path: ${{ steps.set_path.outputs.store_path }}
+        key: pnpm-store-Linux-18.20.4-v1
