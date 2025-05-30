@@ -6,6 +6,4 @@ on:
 jobs:
   call-cache-reuse:
     uses: ./.github/workflows/call-reusable.yml
-    with:
-      node-version : '18.20.8'
     secrets: inherit
