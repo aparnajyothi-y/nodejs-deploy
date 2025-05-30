@@ -1,7 +1,7 @@
 name: Reproduce Cache 422 Error
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   cache-422-repro:
