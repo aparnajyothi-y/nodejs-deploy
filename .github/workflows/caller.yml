@@ -1,0 +1,9 @@
+name: call reusable workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-cache-reuse:
+    uses: ./.github/workflows/call-reusable.yml
+    secrets: inherit
