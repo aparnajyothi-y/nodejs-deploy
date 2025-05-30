@@ -1,11 +1,11 @@
-name: PNPM Cache 422 Repro
+name: Reproduce Cache 422 Error
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 jobs:
-  repro-422:
-    runs-on: self-hosted
+  cache-422-repro:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -18,34 +18,23 @@ jobs:
       - name: Install PNPM
         run: npm install -g pnpm
 
-      - name: Show PNPM store path A
-        id: cache-path-A
-        run: |
-          mkdir -p /tmp/pnpm-store-A
-          echo "dummy content A" > /tmp/pnpm-store-A/cache.txt
-          echo "STORE_PATH=/tmp/pnpm-store-A" >> $GITHUB_ENV
-
       - name: Restore PNPM cache (Path A)
         uses: actions/cache@v4
         with:
-          path: ${{ env.STORE_PATH }}
+          path: /tmp/pnpm-store-path-A
           key: pnpm-store-Linux-18.20.4-v1
 
-      - name: Save PNPM cache (Path A)
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: pnpm-store-Linux-18.20.4-v1
+      - name: Show restored files
+        run: ls -la /tmp/pnpm-store-path-A || echo "No cache restored"
 
-      - name: Show PNPM store path B
-        id: cache-path-B
+      - name: Prepare different cache content in Path B
         run: |
-          mkdir -p /tmp/pnpm-store-B
-          echo "dummy content B" > /tmp/pnpm-store-B/cache.txt
-          echo "STORE_PATH=/tmp/pnpm-store-B" >> $GITHUB_ENV
+          mkdir -p /tmp/pnpm-store-path-B
+          echo "different dummy cache content" > /tmp/pnpm-store-path-B/cache.txt
+          ls -la /tmp/pnpm-store-path-B
 
-      - name: Save PNPM cache (Path B) - conflict expected
+      - name: Save PNPM cache (Path B)
         uses: actions/cache@v4
         with:
-          path: ${{ env.STORE_PATH }}
+          path: /tmp/pnpm-store-path-B
           key: pnpm-store-Linux-18.20.4-v1
