@@ -4,25 +4,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_deploy_20:
+  build_deploy_24:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
       - name: Install dependencies
         run: npm install
 
-  build_deploy_14:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 14
-      - name: Install dependencies
-        run: npm install
+  
       
