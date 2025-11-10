@@ -1,11 +1,32 @@
-name: Repro release-assets redirect
-on: [workflow_dispatch]
+name: Node Redirect Repro
+on: workflow_dispatch
 
 jobs:
-  test:
+  test-redirect:
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_STEP_DEBUG: true
+      ACTIONS_RUNNER_DEBUG: true
+      NODETOOL_VERBOSE: true
+
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+      - uses: actions/checkout@v4
+
+      - name: Debug info
+        run: |
+          echo "Starting redirect reproduction test"
+          echo "Date: $(date)"
+          echo "Cache-bust token: $(date +%s)"
+
+      - name: Setup Node (force CDN fresh fetch)
+        uses: actions/setup-node@v4
         with:
-          node-version: '21'
+          node-version: "20.16.0?cache=$(date +%s)"
+
+      - name: Confirm install
+        run: |
+          node -v
+          which node
+
+      - name: Complete
+        run: echo "Finished test"
