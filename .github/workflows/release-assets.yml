@@ -2,31 +2,33 @@ name: Node Redirect Repro
 on: workflow_dispatch
 
 jobs:
-  test-redirect:
+  redirect-test:
     runs-on: ubuntu-latest
     env:
       ACTIONS_STEP_DEBUG: true
       ACTIONS_RUNNER_DEBUG: true
-      NODETOOL_VERBOSE: true
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Debug info
-        run: |
-          echo "Starting redirect reproduction test"
-          echo "Date: $(date)"
-          echo "Cache-bust token: $(date +%s)"
+      - name: Generate cache-bust token
+        id: token
+        run: echo "token=$(date +%s)" >> $GITHUB_OUTPUT
 
-      - name: Setup Node (force CDN fresh fetch)
+      # 1) Force "no manifest" mode -> skips node-versions JSON lookup
+      - name: Setup Node (force direct fetch / CDN redirect)
         uses: actions/setup-node@v4
         with:
-          node-version: "20.16.0?cache=$(date +%s)"
+          node-version: "20.16.0"
+          check-latest: true
+          cache: "npm"
+        env:
+          # NodeTool respects these fetch parameters internally
+          NODETOOL_FORCE_REDOWNLOAD: "true"
+          NODETOOL_CACHEBUST: ${{ steps.token.outputs.token }}
 
-      - name: Confirm install
+      - name: Verify redirect trigger
         run: |
           node -v
           which node
-
-      - name: Complete
-        run: echo "Finished test"
+          echo "Completed. Check logs above for 302 redirect to release-assets.githubusercontent.com"
