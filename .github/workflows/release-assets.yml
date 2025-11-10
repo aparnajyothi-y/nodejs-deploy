@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node (force direct fetch / CDN redirect)
         uses: actions/setup-node@v4
         with:
-          node-version: "22.0.0-rc.0"
+          node-version: "20.17.0"
           check-latest: true
           cache: "npm"
         env:
