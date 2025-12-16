@@ -9,11 +9,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      # - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
       # - uses: HarithaVattikuti/setup-node@Testnodefetch
-      - uses :  salmanmkc/setup-node@bump-actions-cache-v5
+      # - uses :  salmanmkc/setup-node@bump-actions-cache-v5
         with:
-          node-version: latest
+          node-version: 20
       - name: Install dependencies
         run: npm install
 
