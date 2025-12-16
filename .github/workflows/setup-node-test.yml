@@ -14,9 +14,16 @@ jobs:
       # - uses :  salmanmkc/setup-node@bump-actions-cache-v5
         with:
           node-version: 20
-          cache: npm
-      - name: Install dependencies
-        run: npm install
+          
+      - name: Reproduce url.parse DeprecationWarning (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          node --trace-deprecation -e "require('url').parse('https://example.com')"
 
-  
+      - name: Reproduce url.parse DeprecationWarning (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          node --trace-deprecation -e "require('url').parse('https://example.com')"
       
