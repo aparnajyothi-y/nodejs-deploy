@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aparnajyothi-y/nodejs-deploy.git",
-    "packageManager": "yarn@1.22.21"
+    "packageManager": "npm@9.9.4"
   },
   "dependencies": {
     "express": "^4.18.2",
