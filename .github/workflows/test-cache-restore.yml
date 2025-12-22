@@ -18,7 +18,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '21'
-          cache: 'npm'
 
       # Normalize runner.arch to lowercase for consistent cache keys
       - name: Normalize runner architecture (Linux/macOS)
