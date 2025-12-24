@@ -18,6 +18,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '21'
+          cache : npm
 
       # Restore Node cache (mirrors Restore Go cache)
       - name: Restore Node cache
