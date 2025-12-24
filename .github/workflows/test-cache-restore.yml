@@ -1,4 +1,4 @@
-name: Validate corrupted Node.js SDK
+name: Validate corrupted Node.js
 
 on:
   workflow_dispatch:
