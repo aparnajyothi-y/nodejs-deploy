@@ -18,7 +18,52 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '21'
-          cache : npm
+          cache: false   # IMPORTANT: disable built-in cache
+
+      # Normalize runner.arch (same role as in setup-go)
+      - name: Normalize runner architecture (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          echo "ARCH=$(echo '${{ runner.arch }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Normalize runner architecture (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          "ARCH=$($env:RUNNER_ARCH.ToLower())" | Out-File $env:GITHUB_ENV -Append
+
+      # Node equivalent of `go env GOMODCACHE`
+      - name: Set Node cache path (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            echo "NODE_CACHE=$(pnpm store path)" >> $GITHUB_ENV
+          elif [ -f yarn.lock ]; then
+            echo "NODE_CACHE=$(yarn cache dir)" >> $GITHUB_ENV
+          else
+            echo "NODE_CACHE=$(npm config get cache)" >> $GITHUB_ENV
+          fi
+
+      - name: Set Node cache path (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (Test-Path pnpm-lock.yaml) {
+            $cache = pnpm store path
+          } elseif (Test-Path yarn.lock) {
+            $cache = yarn cache dir
+          } else {
+            $cache = npm config get cache
+          }
+          "NODE_CACHE=$cache" | Out-File $env:GITHUB_ENV -Append
+
+      # Optional sanity check (recommended while debugging)
+      - name: Debug cache env
+        run: |
+          echo "ARCH=$ARCH"
+          echo "NODE_CACHE=$NODE_CACHE"
 
       # Restore Node cache (mirrors Restore Go cache)
       - name: Restore Node cache
@@ -33,4 +78,3 @@ jobs:
 
       - name: Build
         run: npm run build --if-present
-
