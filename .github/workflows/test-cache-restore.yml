@@ -18,8 +18,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '21'
-          cache: false   # IMPORTANT: disable built-in cache
-
+          cache: npm
       # Normalize runner.arch (same role as in setup-go)
       - name: Normalize runner architecture (Linux/macOS)
         if: runner.os != 'Windows'
