@@ -18,7 +18,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '21'
-          cache: false
 
       # Normalize runner.arch to lowercase (same as Go)
       - name: Normalize runner architecture (Linux/macOS)
