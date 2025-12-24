@@ -11,15 +11,16 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Node.js
         id: setup-node
         uses: actions/setup-node@v6
         with:
           node-version: '21'
+          cache: false
 
-      # Normalize runner.arch to lowercase for consistent cache keys
+      # Normalize runner.arch to lowercase (same as Go)
       - name: Normalize runner architecture (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
@@ -33,27 +34,36 @@ jobs:
           $arch = "${{ runner.arch }}".ToLower()
           echo "ARCH=$arch" | Out-File $env:GITHUB_ENV -Append
 
-      # Capture npm cache directory
-      - name: Set npm cache path (Linux/macOS)
-        if: runner.os != 'Windows'
+      # Detect package-manager and cache location (Node equivalent of `go env`)
+      - name: Set Node cache variables
+        shell: bash
         run: |
-          echo "NPM_CACHE=$(npm config get cache)" >> $GITHUB_ENV
+          const fs = require('fs');
+          const { execSync } = require('child_process');
 
-      - name: Set npm cache path (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          echo "NPM_CACHE=$(npm config get cache)" | Out-File $env:GITHUB_ENV -Append
+          let cache;
 
-      # Restore npm cache explicitly (optional if using cache: 'npm')
-      - name: Restore npm cache
+          if (fs.existsSync('pnpm-lock.yaml')) {
+            cache = execSync('pnpm store path').toString().trim();
+          } else if (fs.existsSync('yarn.lock')) {
+            cache = execSync('yarn cache dir').toString().trim();
+          } else {
+            cache = execSync('npm config get cache').toString().trim();
+          }
+
+          fs.appendFileSync(process.env.GITHUB_ENV, `NODE_CACHE=${cache}\n`);
+
+      # Restore Node cache (mirrors Restore Go cache)
+      - name: Restore Node cache
+        id: node-cache
         uses: actions/cache/restore@v5
         with:
-          path: ${{ env.NPM_CACHE }}
-          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-${{ env.packagemanager }}-${{ hashFiles('**/package-lock.json') }}
+          path: ${{ env.NODE_CACHE }}
+          key: setup-node-${{ runner.os }}-${{ env.ARCH }}-node-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('**/*lock*') }}
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build
         run: npm run build --if-present
+
