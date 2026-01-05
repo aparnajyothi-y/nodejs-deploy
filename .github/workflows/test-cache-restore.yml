@@ -22,7 +22,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      # Determine cache path per package manager
       - name: Set cache path
         id: cache-path
         run: |
@@ -32,6 +31,8 @@ jobs:
             echo "CACHE_PATH=$(pnpm store path)" >> $GITHUB_ENV
           elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
             echo "CACHE_PATH=$(yarn cache dir)" >> $GITHUB_ENV
+          fi
+
 
       # Restore cache manually
       - name: Restore Node cache
