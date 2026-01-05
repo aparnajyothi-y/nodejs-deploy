@@ -35,12 +35,13 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.package-manager }}" = "npm" ]; then
-            echo "NODE_CACHE=$(npm config get cache)" >> $GITHUB_ENV
+            echo "node_cache_path=$(npm config get cache)" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.package-manager }}" = "pnpm" ]; then
-            echo "NODE_CACHE=$(pnpm store path)" >> $GITHUB_ENV
+            echo "node_cache_path=$(pnpm store path)" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
-            echo "NODE_CACHE=$(yarn cache dir)" >> $GITHUB_ENV
+            echo "node_cache_path=$(yarn cache dir)" >> $GITHUB_OUTPUT
           fi
+
 
       # Debug cache env
       - name: Debug cache environment
@@ -49,11 +50,10 @@ jobs:
           echo "NODE_CACHE=$NODE_CACHE"
           echo "Package Manager: ${{ matrix.package-manager }}"
 
-      # Restore Node cache
       - name: Restore Node cache
         uses: actions/cache/restore@v5
         with:
-          path: ${{ env.NODE_CACHE }}
+          path: ${{ steps.cache-path.outputs.node_cache_path }}
           key: node-cache-${{ runner.os }}-${{ env.ARCH }}-${{ matrix.package-manager }}-${{ hashFiles('**/package-lock.json','**/npm-shrinkwrap.json','**/pnpm-lock.yaml','**/yarn.lock') }}
 
       # Install dependencies
