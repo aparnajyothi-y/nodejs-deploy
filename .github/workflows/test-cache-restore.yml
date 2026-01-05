@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: false   # disable automatic caching
+        
 
       # Determine cache path per package manager
       - name: Set cache path
