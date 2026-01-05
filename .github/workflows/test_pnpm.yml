@@ -1,4 +1,4 @@
-name: Test PNPM Dependencies Cross-Platform
+name: Test Yarn Dependencies Cross-Platform
 
 on:
   workflow_dispatch:
@@ -14,25 +14,20 @@ jobs:
       # Checkout the repository
       - uses: actions/checkout@v5
 
-      # Setup pnpm
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10  # must be >=6.10 for CI caching support
-
-      # Setup Node.js with pnpm caching
+      # Setup Node.js with Yarn caching
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'pnpm'   # automatic pnpm store caching
+          cache: 'yarn'  # enables automatic caching for Yarn
 
-      # Optional: Debug PNPM store path
-      - name: Debug PNPM Store
+      # Optional: Debug Yarn cache path
+      - name: Debug Yarn Cache
         run: |
-          echo "PNPM Store Directory:"
-          pnpm store path
+          echo "Yarn cache directory:"
+          yarn cache dir
 
-      # Install dependencies (frozen-lockfile automatically used if lockfile exists)
-      - run: pnpm install
+      # Install dependencies (frozen-lockfile automatically used if yarn.lock exists)
+      - run: yarn install --frozen-lockfile
 
       # Run tests
-      - run: pnpm test
+      - run: yarn test
