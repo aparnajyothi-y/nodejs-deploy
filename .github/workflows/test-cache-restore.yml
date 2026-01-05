@@ -21,7 +21,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-        
 
       # Determine cache path per package manager
       - name: Set cache path
@@ -33,13 +32,15 @@ jobs:
             echo "CACHE_PATH=$(pnpm store path)" >> $GITHUB_ENV
           elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
             echo "CACHE_PATH=$(yarn cache dir)" >> $GITHUB_ENV
-          fi
 
+      # Restore cache manually
       - name: Restore Node cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache@v5
         with:
-          path: ${{ env.NODE_CACHE }}
-          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-${{ matrix.package-manager }}-${{ hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
+          path: ${{ env.CACHE_PATH }}   # <- use CACHE_PATH
+          key: node-cache-${{ runner.os }}-${{ matrix.package-manager }}-${{ hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
+          restore-keys: |
+            node-cache-${{ runner.os }}-${{ matrix.package-manager }}-
 
       # Install dependencies
       - name: Install Dependencies
@@ -50,7 +51,6 @@ jobs:
             pnpm install
           elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
             yarn install --frozen-lockfile
-          fi
 
       # Run tests
       - name: Run Tests
@@ -61,4 +61,3 @@ jobs:
             pnpm test
           elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
             yarn test
-          fi
