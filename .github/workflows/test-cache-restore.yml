@@ -35,14 +35,11 @@ jobs:
             echo "CACHE_PATH=$(yarn cache dir)" >> $GITHUB_ENV
           fi
 
-      # Restore cache manually
-      - name: Restore Package Manager Cache
-        uses: actions/cache@v5
+      - name: Restore Node cache
+        uses: actions/cache/restore@v5
         with:
-          path: ${{ env.CACHE_PATH }}
-          key: node-cache-${{ runner.os }}-${{ matrix.package-manager }}-${{ hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
-          restore-keys: |
-            node-cache-${{ runner.os }}-${{ matrix.package-manager }}-
+          path: ${{ env.NODE_CACHE }}
+          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-${{ matrix.package-manager }}-${{ hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
 
       # Install dependencies
       - name: Install Dependencies
