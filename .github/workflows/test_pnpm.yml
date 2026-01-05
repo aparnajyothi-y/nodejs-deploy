@@ -1,62 +1,29 @@
-name: Test Dependencies Setup
+name: Test PNPM Dependencies
 
 on:
   workflow_dispatch:
 
-env:
-  CI: true
-  PNPM_CACHE_FOLDER: .pnpm-store
-
 jobs:
-  setup_dependencies:
-    name: 'Setup and Test Dependencies'
-    timeout-minutes: 15
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code repository
-        uses: actions/checkout@v3
+      # Checkout the repository
+      - uses: actions/checkout@v5
+
+      # Setup pnpm
+      - uses: pnpm/action-setup@v4
         with:
-          fetch-depth: 0
+          version: 10  # must be >=6.10 for proper caching
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
+      # Setup Node.js with pnpm caching enabled
+      - uses: actions/setup-node@v6
         with:
-          version: 9.1.2
+          node-version: '24'
+          cache: 'pnpm'  # enables automatic caching of pnpm store
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
+      # Install dependencies (frozen-lockfile used automatically in CI if pnpm-lock.yaml exists)
+      - run: pnpm install
 
-      - name: Setup PNPM Store Config
-        run: pnpm config set store-dir $PNPM_CACHE_FOLDER
-
-      - name: Install Dependencies
-        run: |
-          if [ ! -f pnpm-lock.yaml ]; then
-            echo "Lockfile not found. Generating new lockfile."
-            pnpm install
-          else
-            echo "Lockfile found. Installing dependencies with frozen lockfile."
-            pnpm install --frozen-lockfile
-          fi
-
-      - name: Setup npmrc File for Private Registry
-        run: |
-          echo "@mycompany:registry=https://npm.pkg.github.com" >> "$HOME/.npmrc"
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}" >> "$HOME/.npmrc"
-          echo "//registry.npmjs.org/:_authToken=null" >> "$HOME/.npmrc"
-
-      - name: Debugging Step
-        run: |
-          echo "Current Directory:"
-          pwd
-          echo "PNPM Cache Directory:"
-          ls -al $PNPM_CACHE_FOLDER
-          echo "NPMRC File:"
-          cat "$HOME/.npmrc"
-
-      - name: Test Dependencies
-        run: pnpm test # Replace with your actual test command if needed
+      # Run tests
+      - run: pnpm test
