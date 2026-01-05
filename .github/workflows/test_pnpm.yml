@@ -1,11 +1,14 @@
-name: Test PNPM Dependencies
+name: Test PNPM Dependencies Cross-Platform
 
 on:
   workflow_dispatch:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       # Checkout the repository
@@ -14,15 +17,21 @@ jobs:
       # Setup pnpm
       - uses: pnpm/action-setup@v4
         with:
-          version: 10  # must be >=6.10 for proper caching
+          version: 10  # must be >=6.10 for CI caching support
 
-      # Setup Node.js with pnpm caching enabled
+      # Setup Node.js with pnpm caching
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'pnpm'  # enables automatic caching of pnpm store
+          cache: 'pnpm'   # automatic pnpm store caching
 
-      # Install dependencies (frozen-lockfile used automatically in CI if pnpm-lock.yaml exists)
+      # Optional: Debug PNPM store path
+      - name: Debug PNPM Store
+        run: |
+          echo "PNPM Store Directory:"
+          pnpm store path
+
+      # Install dependencies (frozen-lockfile automatically used if lockfile exists)
       - run: pnpm install
 
       # Run tests
