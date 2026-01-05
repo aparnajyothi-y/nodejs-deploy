@@ -17,8 +17,8 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v6
         with:
-          node-version: '21'
-          package-manager-cache: false 
+          node-version: '18'
+          # package-manager-cache: false 
 
       # Normalize arch
       - name: Normalize runner architecture
