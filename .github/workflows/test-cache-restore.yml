@@ -1,4 +1,4 @@
-name: Validate corrupted Node.js
+name: test cache-restore
 
 on:
   workflow_dispatch:
