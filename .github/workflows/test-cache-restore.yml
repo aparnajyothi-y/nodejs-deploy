@@ -18,37 +18,73 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '21'
-          package-manager-cache: true   # IMPORTANT
+         
 
-      # Normalize arch
+      # Normalize runner.arch (x64 / arm64)
       - name: Normalize runner architecture
         shell: bash
         run: |
           echo "ARCH=$(echo '${{ runner.arch }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-      # Node equivalent of `go env GOMODCACHE`
-      - name: Set Node cache path
-        if: runner.os != 'Windows'
+
+      # Detect package manager + cache path (Node equivalent of `go env`)
+      - name: Detect package manager and cache path
         shell: bash
         run: |
           set -e
-          echo "NODE_CACHE=$(npm config get cache)" >> $GITHUB_ENV
-      - name: Set Node cache path (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
+
+          if [ -f pnpm-lock.yaml ]; then
+            PM=pnpm
+            CACHE_PATH=$(pnpm store path)
+            LOCK_PATTERN="**/pnpm-lock.yaml"
+          elif [ -f yarn.lock ]; then
+            PM=yarn
+            CACHE_PATH=$(yarn cache dir)
+            LOCK_PATTERN="**/yarn.lock"
+          else
+            PM=npm
+            CACHE_PATH=$(npm config get cache)
+            LOCK_PATTERN="**/package-lock.json"
+          fi
+
+          echo "PACKAGE_MANAGER=$PM" >> $GITHUB_ENV
+          echo "NODE_CACHE=$CACHE_PATH" >> $GITHUB_ENV
+          echo "LOCK_PATTERN=$LOCK_PATTERN" >> $GITHUB_ENV
+
+      - name: Debug cache variables
         run: |
-          "NODE_CACHE=$(npm config get cache)" | Out-File $env:GITHUB_ENV -Append
-      - name: Debug cache env
-        run: |
+          echo "OS=${{ runner.os }}"
           echo "ARCH=$ARCH"
+          echo "PACKAGE_MANAGER=$PACKAGE_MANAGER"
           echo "NODE_CACHE=$NODE_CACHE"
+          echo "LOCK_PATTERN=$LOCK_PATTERN"
+
+      # Restore Node cache (setup-go equivalent)
       - name: Restore Node cache
+        id: node-cache
         uses: actions/cache/restore@v5
         with:
           path: ${{ env.NODE_CACHE }}
-          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-${{ env.PACKAGE_MANAGER }}-${{ hashFiles(env.LOCK_PATTERN) }}
 
+      # Install dependencies (PM-aware)
       - name: Install dependencies
-        run: pnpm ci
+        shell: bash
+        run: |
+          if [ "$PACKAGE_MANAGER" = "pnpm" ]; then
+            pnpm install --frozen-lockfile
+          elif [ "$PACKAGE_MANAGER" = "yarn" ]; then
+            yarn install --frozen-lockfile
+          else
+            npm ci
+          fi
 
       - name: Build
-        run: pnpm run build
+        shell: bash
+        run: |
+          if [ "$PACKAGE_MANAGER" = "pnpm" ]; then
+            pnpm run build
+          elif [ "$PACKAGE_MANAGER" = "yarn" ]; then
+            yarn build
+          else
+            npm run build --if-present
+          fi
