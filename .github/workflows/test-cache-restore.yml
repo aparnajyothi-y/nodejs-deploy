@@ -1,4 +1,4 @@
-name: Test Node.js Dependencies (Cache Restore Only)
+name: Validate corrupted Node.js SDK
 
 on:
   workflow_dispatch:
@@ -9,73 +9,46 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [21]
-        package-manager: [npm, pnpm, yarn]
 
     steps:
-      # Checkout code
       - uses: actions/checkout@v6
 
-      # Setup Node.js without automatic caching
       - name: Setup Node.js
+        id: setup-node
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
-          package-manager-cache: false
+          node-version: '21'
+          package-manager-cache: true   # IMPORTANT
 
-      # Normalize runner architecture
+      # Normalize arch
       - name: Normalize runner architecture
         shell: bash
         run: |
           echo "ARCH=$(echo '${{ runner.arch }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      # Determine cache path per package manager
+      # Node equivalent of `go env GOMODCACHE`
       - name: Set Node cache path
-        id: cache-path
+        if: runner.os != 'Windows'
         shell: bash
         run: |
-          if [ "${{ matrix.package-manager }}" = "npm" ]; then
-            echo "node_cache_path=$(npm config get cache)" >> $GITHUB_OUTPUT
-          elif [ "${{ matrix.package-manager }}" = "pnpm" ]; then
-            echo "node_cache_path=$(pnpm store path)" >> $GITHUB_OUTPUT
-          elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
-            echo "node_cache_path=$(yarn cache dir)" >> $GITHUB_OUTPUT
-          fi
-
-
-      # Debug cache env
-      - name: Debug cache environment
+          set -e
+          echo "NODE_CACHE=$(npm config get cache)" >> $GITHUB_ENV
+      - name: Set Node cache path (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          "NODE_CACHE=$(npm config get cache)" | Out-File $env:GITHUB_ENV -Append
+      - name: Debug cache env
         run: |
           echo "ARCH=$ARCH"
           echo "NODE_CACHE=$NODE_CACHE"
-          echo "Package Manager: ${{ matrix.package-manager }}"
-
       - name: Restore Node cache
         uses: actions/cache/restore@v5
         with:
-          path: ${{ steps.cache-path.outputs.node_cache_path }}
-          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-${{ matrix.package-manager }}-${{ hashFiles('**/package-lock.json','**/npm-shrinkwrap.json','**/pnpm-lock.yaml','**/yarn.lock') }}
+          path: ${{ env.NODE_CACHE }}
+          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-pnpm-${{ hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json') }}
 
-      # Install dependencies
       - name: Install dependencies
-        shell: bash
-        run: |
-          if [ "${{ matrix.package-manager }}" = "npm" ]; then
-            npm ci
-          elif [ "${{ matrix.package-manager }}" = "pnpm" ]; then
-            pnpm install
-          elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
-            yarn install --frozen-lockfile
-          fi
+        run: npm ci
 
-      # Build
       - name: Build
-        shell: bash
-        run: |
-          if [ "${{ matrix.package-manager }}" = "npm" ]; then
-            npm run build --if-present
-          elif [ "${{ matrix.package-manager }}" = "pnpm" ]; then
-            pnpm run build --if-present
-          elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
-            yarn build || true
-          fi
+        run: npm run build --if-present
