@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: ${{ env.NODE_CACHE }}
-          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml) }}
+          key: node-cache-${{ runner.os }}-${{ env.ARCH }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Install dependencies
         run: pnpm ci
