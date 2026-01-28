@@ -1,0 +1,17 @@
+name: Repro setup-node mirror issue
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js using authenticated mirror
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.20.0
+          mirror: https://redacted/artifactory/nodejs-remote/dist
+          mirror-token: ${{ secrets.MIRROR_TOKEN }}
