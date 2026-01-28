@@ -12,6 +12,6 @@ jobs:
       - name: Setup Node.js using authenticated mirror
         uses: marco-ippolito/setup-node@fix-bearer-token
         with:
-          node-version: 22.20.0
+          node-version: 22.20.0-custom
           mirror: https://redacted/artifactory/nodejs-remote/dist
           mirror-token: ${{ secrets.MIRROR_TOKEN }}
