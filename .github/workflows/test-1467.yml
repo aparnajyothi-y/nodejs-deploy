@@ -1,0 +1,31 @@
+name: Test setup-node PR#1467 authentication change
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-auth-registry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node using PR#1467
+        uses: marco-ippolito/setup-node@fix-bearer-token
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Verify node and npm
+        run: |
+          node --version
+          npm --version
+
+      - name: Install dependencies from authenticated registry
+        run: npm install
+
+      - name: Validate npm authentication
+        run: npm whoami
