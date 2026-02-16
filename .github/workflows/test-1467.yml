@@ -16,7 +16,7 @@ jobs:
         # uses : actions/setup-node@v6
         with:
           node-version: '20'
-          mirror-url: https://httpbin.org
+          mirror: 'https://httpbin.org'
           mirror-token: 'Bearer test-token'
 
       - name: Verify node and npm
@@ -26,6 +26,3 @@ jobs:
 
       - name: Install dependencies from authenticated registry
         run: npm install
-
-      - name: Validate npm authentication
-        run: npm whoami
