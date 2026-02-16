@@ -15,7 +15,7 @@ jobs:
         uses: marco-ippolito/setup-node@fix-bearer-token
         # uses : actions/setup-node@v6
         with:
-          node-version: '21'
+          node-version: '22'
           mirror: 'https://httpbin.org'
           mirror-token: 'Bearer test-token'
 
